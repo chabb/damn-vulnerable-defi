@@ -59,6 +59,10 @@ contract PuppetPool is ReentrancyGuard {
 
     function _computeOraclePrice() private view returns (uint256) {
         // calculates the price of the token in wei according to Uniswap pair
+        // this is where the vulnerability lies, we rely on the uniswap balance
+        // 1. The player can dump tokens in the uniswap liquidity pool, this will lower the price perception
+        // 2. As the DVT price is super low, you do not need to make a big ETH deposits
+        // 3. This allows to make a big borrow
         return uniswapPair.balance * (10 ** 18) / token.balanceOf(uniswapPair);
     }
 }
