@@ -44,7 +44,7 @@ describe('[Challenge] Unstoppable', function () {
     });
 
     it('Execution', async function () {
-        // there are two sources of truth useed in the code. Make them different, the transactions will revert
+        // there are two sources of truth used in the code. Make them different, the transactions will revert
         await token.transfer(vault.address, 1);
     });
 

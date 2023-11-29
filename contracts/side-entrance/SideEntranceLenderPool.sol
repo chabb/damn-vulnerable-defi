@@ -39,7 +39,12 @@ contract SideEntranceLenderPool {
     function flashLoan(uint256 amount) external {
         uint256 balanceBefore = address(this).balance;
 
+        // we can leverage re-entrancy. We make a flashLoan with all the amount of the pool,
+        // in the execute(), we deposit all the amount. The flash pool will not revert, because the
+        // balance is still the same, but now we have all the funds in our balances.
+        // Once the contract is done, we can call withdraw
         IFlashLoanEtherReceiver(msg.sender).execute{value: amount}();
+        // this contract have good faith in the receiver, but it should not
 
         if (address(this).balance < balanceBefore)
             revert RepayFailed();

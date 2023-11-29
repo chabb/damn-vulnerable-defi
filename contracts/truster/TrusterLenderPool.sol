@@ -29,6 +29,9 @@ contract TrusterLenderPool is ReentrancyGuard {
         uint256 balanceBefore = token.balanceOf(address(this));
 
         token.transfer(borrower, amount);
+
+        // this allows to execute arbitrary code. one possible attack would be to make a a call to the underlying
+        /// token and allow the attacker to transfer some funds
         target.functionCall(data);
 
         if (token.balanceOf(address(this)) < balanceBefore)

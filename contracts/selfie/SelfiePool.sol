@@ -66,6 +66,7 @@ contract SelfiePool is ReentrancyGuard, IERC3156FlashLender {
         return true;
     }
 
+    // you want to be able to be the governor. use a flash loan to get enough tokens, so you can queue an action
     function emergencyExit(address receiver) external onlyGovernance {
         uint256 amount = token.balanceOf(address(this));
         token.transfer(receiver, amount);
