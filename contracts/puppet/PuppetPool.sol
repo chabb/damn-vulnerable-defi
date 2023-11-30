@@ -63,6 +63,11 @@ contract PuppetPool is ReentrancyGuard {
         // 1. The player can dump tokens in the uniswap liquidity pool, this will lower the price perception
         // 2. As the DVT price is super low, you do not need to make a big ETH deposits
         // 3. This allows to make a big borrow
+
+        // this is the ETH / DVT ratio... this means that if we dump DVT, this ratio will become super low
+        // 1. the uniswap pool has first 10 eth, 10 dvt, the ratio is 10 / 10 => 1
+        // 2. we dump 100000 DVT, the ratio will be approx. 11 / 1000 => a very low value
+
         return uniswapPair.balance * (10 ** 18) / token.balanceOf(uniswapPair);
     }
 }

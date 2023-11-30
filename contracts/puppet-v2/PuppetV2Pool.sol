@@ -20,7 +20,7 @@ contract PuppetV2Pool {
     address private _uniswapPair;
     address private _uniswapFactory;
     IERC20 private _token;
-    IERC20 private _weth;
+    IERC20 private _weth; // wrapped ether token, uniswap v2 used wrapped ether token
 
     mapping(address => uint256) public deposits;
 
@@ -62,8 +62,12 @@ contract PuppetV2Pool {
 
     // Fetch the price from Uniswap v2 using the official libraries
     function _getOracleQuote(uint256 amount) private view returns (uint256) {
+        // note that nothing will change, we still get the reserve of each token, and the quote
+
         (uint256 reservesWETH, uint256 reservesToken) =
             UniswapV2Library.getReserves(_uniswapFactory, address(_weth), address(_token));
+
+        // let's suppose amount is one, it will be  ( 1 * ETH )  / DVT => we still can dump DVT and it will work
         return UniswapV2Library.quote(amount.mul(10 ** 18), reservesToken, reservesWETH);
     }
 }

