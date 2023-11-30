@@ -15,6 +15,7 @@
     "compromised": "yarn hardhat test test/compromised/compromised.challenge.js",
     "puppet": "yarn hardhat test test/puppet/puppet.challenge.js",
     "puppet-v2": "yarn hardhat test test/puppet-v2/puppet-v2.challenge.js",
+    "puppet-v2b": "yarn hardhat test test/puppet-v2/puppet-v2b.challenge.js",
     "free-rider": "yarn hardhat test test/free-rider/free-rider.challenge.js",
     "backdoor": "yarn hardhat test test/backdoor/backdoor.challenge.js",
     "climber": "yarn hardhat test test/climber/climber.challenge.js",
