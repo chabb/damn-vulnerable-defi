@@ -42,10 +42,19 @@ describe('[Challenge] Backdoor', function () {
 
         // Transfer tokens to be distributed to the registry
         await token.transfer(walletRegistry.address, AMOUNT_TOKENS_DISTRIBUTED);
+
+        // Note that the beneficiaries do not have registered their wallet now
     });
 
     it('Execution', async function () {
         /** CODE YOUR SOLUTION HERE */
+        await ethers.getContractFactory('Attacker', player).then(f => f.deploy(
+            masterCopy.address,
+            walletFactory.address,
+            walletRegistry.address,
+            [alice.address, bob.address, charlie.address, david.address],
+            token.address
+        ));
     });
 
     after(async function () {
@@ -75,3 +84,6 @@ describe('[Challenge] Backdoor', function () {
         ).to.eq(AMOUNT_TOKENS_DISTRIBUTED);
     });
 });
+
+
+// see https://ardislu.dev/damn-vulnerable-defi/11.

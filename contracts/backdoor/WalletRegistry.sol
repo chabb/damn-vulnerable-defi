@@ -75,6 +75,13 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
 
         address payable walletAddress = payable(proxy);
 
+
+        // The below checks are doing the following
+        // Only the "official" GnosisSafeProxyFactory and GnosisSafe implementations are used to deploy the safe.
+        // Only the GnosisSafe::setup function is called as the safe initializer.
+        // The only owner of the new safe is a valid beneficiary address.
+        // (New in v3.0.0) The fallbackHandler of GnosisSafe::setup is equal to address(0)
+
         // Ensure correct factory and master copy
         if (msg.sender != walletFactory) {
             revert CallerNotFactory();
@@ -95,6 +102,7 @@ contract WalletRegistry is IProxyCreationCallback, Ownable {
             revert InvalidThreshold(threshold);
         }
 
+        // check there is only one owner
         address[] memory owners = GnosisSafe(walletAddress).getOwners();
         if (owners.length != EXPECTED_OWNERS_COUNT) {
             revert InvalidOwnersCount(owners.length);
