@@ -28,8 +28,9 @@ interface IWeth is IERC20 {
 contract AttackPuppetV2 {
 
     uint256 constant PLAYER_INITIAL_TOKEN_BALANCE = 10000 ether; // actually dvt
+    uint256 constant POOL_INITIAL_TOKEN_BALANCE = 1000000 ether; // actually dvt
 
-    IWeth private immutable wrappedEth;  console.log("1. attacker ETH balance: ", address(this).balance / 10 ** 18);
+    IWeth private immutable wrappedEth;
     IERC20 private immutable token;
     address private immutable player;
     IUniswapRouter private immutable router;
@@ -45,10 +46,9 @@ contract AttackPuppetV2 {
     }
 
     function swap() external {
-
+        // TODO add console.log statements to show the progression
         console.log("1. attacker ETH balance: ", address(this).balance / 10 ** 18);
         token.approve(address(router), PLAYER_INITIAL_TOKEN_BALANCE);
-
         address[] memory pair = new address[](2);
         pair[0] = address(token);
         pair[1] = address(wrappedEth);

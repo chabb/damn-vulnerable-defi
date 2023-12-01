@@ -64,11 +64,13 @@ contract FreeRiderNFTMarketplace is ReentrancyGuard {
         if (msg.sender != _token.ownerOf(tokenId))
             revert CallerNotOwner(tokenId);
 
+        // the contract must be approved to transfer this token AND the caller must have delegated this contract to operate the token
         if (_token.getApproved(tokenId) != address(this) && !_token.isApprovedForAll(msg.sender, address(this)))
             revert InvalidApproval();
 
         offers[tokenId] = price;
 
+        // increment offerCounts
         assembly { // gas savings
             sstore(0x02, add(sload(0x02), 0x01))
         }
@@ -76,6 +78,8 @@ contract FreeRiderNFTMarketplace is ReentrancyGuard {
         emit NFTOffered(msg.sender, tokenId, price);
     }
 
+    // THERE IS A BUG THERE, YOU JUST NEED TO SEND THE ETH FOR ONE TOKEN, in buyOne, msg.value will always be of the
+    // same value. the fix would be to perform the check immediately
     function buyMany(uint256[] calldata tokenIds) external payable nonReentrant {
         for (uint256 i = 0; i < tokenIds.length;) {
             unchecked {
@@ -99,7 +103,8 @@ contract FreeRiderNFTMarketplace is ReentrancyGuard {
         DamnValuableNFT _token = token; // cache for gas savings
         _token.safeTransferFrom(_token.ownerOf(tokenId), msg.sender, tokenId);
 
-        // pay seller using cached token
+        // the fix would be to get back the own at that point
+        // pay seller using cached token !!!!!!!!!! THERE IS AN ERROR, THIS GOES TO THE NEW OWNER, SO THE BUYER GETS THE SALES TOO
         payable(_token.ownerOf(tokenId)).sendValue(priceToPay);
 
         emit NFTBought(msg.sender, tokenId, priceToPay);
