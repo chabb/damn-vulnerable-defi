@@ -53,6 +53,7 @@ contract FreeRider is IUniswapV2Callee, IERC721Receiver {
         // repay the borrowed ETH, but there is a 0.3% fee
         uint amount0Adjusted = (amount0 * 103) / 100;
         wEth.deposit{value: amount0Adjusted}();
+        // give back the ownership to uniswap
         wEth.transfer(msg.sender, amount0Adjusted);
     }
 
